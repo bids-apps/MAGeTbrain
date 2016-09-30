@@ -1,9 +1,13 @@
-FROM ubuntu:trusty
+# Use phusion/baseimage as base image
+FROM phusion/baseimage:0.9.19
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
-    && apt-get install -y curl cmake build-essential git parallel zlib1g-dev
+    && apt-get install -y curl cmake build-essential git parallel zlib1g-dev apt-utils
 
 RUN curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
 RUN bash anaconda.sh -b -p /opt/anaconda && rm anaconda.sh
@@ -22,18 +26,18 @@ RUN git clone https://github.com/stnava/ANTs.git /opt/ANTs && cd /opt/ANTs && gi
 #RUN git clone https://github.com/gdevenyi/ANTs.git --branch vtk-fix /opt/ANTs
 RUN mkdir /opt/ANTs/build && cd /opt/ANTs/build && \
     cmake -DITK_BUILD_MINC_SUPPORT:BOOL=ON \
-          -DUSE_VTK:BOOL=ON \
-          -DUSE_SYSTEM_VTK:BOOL=OFF \
           /opt/ANTs && \
           make
 
 RUN git clone --depth 1 https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT
+RUN /opt/anaconda/bin/pip install qbatch
+
 
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g bids-validator
 
-ENV PATH /opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH /opt/ANTs/build/bin:/opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 RUN mkdir /scratch
 RUN mkdir /local-scratch
@@ -44,7 +48,8 @@ RUN chmod +x /code/run.py
 
 COPY version /version
 
-RUN python --version
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 ENTRYPOINT ["/code/run.py"]
