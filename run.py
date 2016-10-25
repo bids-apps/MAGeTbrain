@@ -140,7 +140,7 @@ if args.analysis_level == "participant":
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
              symlink_force(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-    cmd = 'mb.sh -s "' + " ".join(subject_T1_list) + '" -- run'
+    cmd = 'mb.sh -s "' + " ".join(subject_T1_list) + '" -- subject resample vote'
     run(cmd)
 
 # running template level preprocessing
