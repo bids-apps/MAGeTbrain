@@ -10,7 +10,7 @@ RUN apt-get update \
     && curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
-    && (cd /opt/antsRegistration-MAGeT && git checkout b0bdc311fd6b6485b3cfa35398cce0ecc3fd4153) \
+    && (cd /opt/antsRegistration-MAGeT && git checkout d329c9ba7474321e11f96998b1066279bd09e7eb) \
     && git clone --depth 1 https://github.com/CobraLab/atlases.git /opt/atlases \
     && curl -sL http://cobralab.net/files/brains_t1.tar.bz2 | tar xvj -C /opt/atlases \
     && curl -o /opt/atlases/colin.zip -sL http://packages.bic.mni.mcgill.ca/mni-models/colin27/mni_colin27_1998_minc2.zip \
