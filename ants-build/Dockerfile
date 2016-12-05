@@ -11,7 +11,7 @@ RUN buildDeps='cmake build-essential git zlib1g-dev' \
     && apt-get install -y $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && git clone https://github.com/stnava/ANTs.git /opt/ANTs-src \
-    && cd /opt/ANTs-src && git checkout 9e1c52ec280b279a2c8f89ea2c5b8fb1995c26c5 \
+    && cd /opt/ANTs-src && git checkout e56f961bf99b8bcb98eb25774eec3ca9479ca3ba \
     && mkdir /opt/ANTs-src/build && cd /opt/ANTs-src/build \
     && cmake -DITK_BUILD_MINC_SUPPORT:BOOL=ON \
     -DBUILD_TESTING:BOOL=OFF -DRUN_LONG_TESTS:BOOL=OFF -DRUN_SHORT_TESTS:BOOL=OFF \
