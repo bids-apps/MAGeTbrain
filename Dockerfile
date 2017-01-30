@@ -11,10 +11,12 @@ RUN apt-get update \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
     && (cd /opt/antsRegistration-MAGeT && git checkout d329c9ba7474321e11f96998b1066279bd09e7eb) \
-    && git clone --depth 1 https://github.com/CobraLab/atlases.git /opt/atlases \
-    && curl -sL http://cobralab.net/files/brains_t1.tar.bz2 | tar xvj -C /opt/atlases \
-    && curl -o /opt/atlases/colin.zip -sL http://packages.bic.mni.mcgill.ca/mni-models/colin27/mni_colin27_1998_minc2.zip \
-    && mkdir /opt/atlases/colin && unzip /opt/atlases/colin.zip -d /opt/atlases/colin && rm -f /opt/atlases/colin.zip \
+    && curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.zip \
+    && mkdir /opt/atlases-nifti \
+    && unzip /opt/atlases-nifti.zip -d /opt \
+    && curl -sL http://cobralab.net/files/brains_t1_nifti.tar.bz2 | tar xvj -C /opt/atlases-nifti \
+    && curl -o /opt/atlases-nifti/colin.zip -sL http://packages.bic.mni.mcgill.ca/mni-models/colin27/mni_colin27_1998_nifti.zip \
+    && mkdir /opt/atlases-nifti/colin && unzip /opt/atlases-nifti/colin.zip -d /opt/atlases-nifti/colin && rm -f /opt/atlases-nifti/colin.zip \
     && curl -sL https://deb.nodesource.com/setup_4.x | bash - \
     && apt-get install -y nodejs \
     && apt-get purge --auto-remove -y git curl unzip \

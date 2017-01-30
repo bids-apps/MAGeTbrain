@@ -74,49 +74,49 @@ run('mb.sh -- init')
 
 #Link in either colin or the big 5 atlases
 if args.segmentation_type != 'colin27-subcortical':
-    atlases = glob("/opt/atlases/brains_t1/*mnc")
+    atlases = glob("/opt/atlases-nifti/brains_t1_nifti/*nii.gz")
     for atlas in atlases:
         symlink_force(
             atlas, '{0}/input/atlas/{1}'.format(args.output_dir, os.path.basename(atlas)))
 else:
-    symlink_force('/opt/atlases/colin/colin27_t1_tal_lin.mnc',
-                  '{0}/input/atlas/colin27_t1.mnc'.format(args.output_dir))
+    symlink_force('/opt/atlases-nifti/colin/colin27_t1_tal_lin.nii',
+                  '{0}/input/atlas/colin27_t1.nii'.format(args.output_dir))
 
 
 #Link in the labels selected
 if args.segmentation_type == 'amygdala':
-    labels = glob('/opt/atlases/amygdala/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_amygdala.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 elif args.segmentation_type == 'cerebellum':
-    labels = glob('/opt/atlases/cerebellum/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 elif args.segmentation_type == 'hippocampus-whitematter':
-    labels = glob('/opt/atlases/hippocampus-whitematter/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_hcwm.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 elif args.segmentation_type == 'all':
-    labels = glob('/opt/atlases/amygdala/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_amygdala.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 
-    labels = glob('/opt/atlases/cerebellum/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 
-    labels = glob('/opt/atlases/hippocampus-whitematter/labels/*.mnc')
+    labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_hcwm.mnc'.format(
+        symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
 elif args.segmentation_type == 'colin27-subcortical':
-    symlink_force('/opt/atlases/colin27-subcortical/labels/thalamus-globus_pallidus-striatum.mnc',
-                  '{0}/input/atlas/colin27_label_subcortical.mnc'.format(args.output_dir))
+    symlink_force('/opt/atlases-nifti/colin27-subcortical/labels/thalamus-globus_pallidus-striatum.nii.gz',
+                  '{0}/input/atlas/colin27_label_subcortical.nii.gz'.format(args.output_dir))
 
 #Select subjects
 subjects_to_analyze = []
