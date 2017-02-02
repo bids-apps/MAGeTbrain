@@ -27,7 +27,8 @@ ENV CONDA_PATH "/opt/anaconda"
 #RUN /opt/anaconda/bin/pip install qbatch
 RUN /opt/anaconda/bin/pip install https://github.com/pipitone/qbatch/archive/master.zip
 
-RUN npm install -g bids-validator@0.18.17
+
+RUN npm install -g bids-validator@0.20.0
 
 ENV PATH /opt/ANTs/bin:/opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV QBATCH_SYSTEM local
