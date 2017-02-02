@@ -88,32 +88,32 @@ if args.segmentation_type == 'amygdala':
     labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'cerebellum':
     labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'hippocampus-whitematter':
     labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'all':
     labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 
     labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 
     labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
         symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
-            args.output_dir, os.path.splitext(os.path.basename(label))[0][0:-1]))
+            args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'colin27-subcortical':
     symlink_force('/opt/atlases-nifti/colin27-subcortical/labels/thalamus-globus_pallidus-striatum.nii.gz',
                   '{0}/input/atlas/colin27_label_subcortical.nii.gz'.format(args.output_dir))
