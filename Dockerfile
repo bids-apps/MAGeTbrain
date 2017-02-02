@@ -24,7 +24,8 @@ RUN apt-get update \
 
 ENV CONDA_PATH "/opt/anaconda"
 
-RUN /opt/anaconda/bin/pip install qbatch
+#RUN /opt/anaconda/bin/pip install qbatch
+RUN /opt/anaconda/bin/pip install https://github.com/pipitone/qbatch/archive/master.zip
 
 RUN npm install -g bids-validator@0.18.17
 
