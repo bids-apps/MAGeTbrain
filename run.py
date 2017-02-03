@@ -61,7 +61,8 @@ parser.add_argument('-v', '--version', action='version',
                     version='MAGeTbrain version {}'.format(__version__))
 parser.add_argument('--n_cpus', help='Number of CPUs/cores available to use.',
                    default=1, type=int)
-
+parser.add_argument('--fast', help='Use faster (less accurate) registration calls',
+                   action='store_true')
 
 args = parser.parse_args()
 
@@ -81,7 +82,6 @@ if args.segmentation_type != 'colin27-subcortical':
 else:
     symlink_force('/opt/atlases-nifti/colin/colin27_t1_tal_lin.nii',
                   '{0}/input/atlas/colin27_t1.nii'.format(args.output_dir))
-
 
 #Link in the labels selected
 if args.segmentation_type == 'amygdala':
@@ -140,7 +140,7 @@ if args.analysis_level == "participant":
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
              symlink_force(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-    cmd = 'mb.sh -s "' + " ".join(subject_T1_list) + '" -- subject resample vote'
+    cmd = 'QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s "' + " ".join(subject_T1_list) + '" -- subject resample vote'.format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '')
     run(cmd)
 
 # running template level preprocessing
@@ -153,5 +153,5 @@ elif args.analysis_level == "group":
     # limit list to 21 subjects which is the standard max for MAGeTbrain templates
     for subject_file in template_T1_files[0:20]:
         symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    cmd = "mb.sh -- template"
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -- template".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '')
     run(cmd)
