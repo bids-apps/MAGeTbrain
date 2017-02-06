@@ -140,7 +140,7 @@ if args.analysis_level == "participant":
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
              symlink_force(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-    cmd = 'QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s "' + " ".join(subject_T1_list) + '" -- subject resample vote'.format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '')
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or "") + " ".join(subject_T1_list) + " -- subject resample vote"
     run(cmd)
 
 # running template level preprocessing
