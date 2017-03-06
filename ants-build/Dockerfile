@@ -11,12 +11,22 @@ RUN buildDeps='cmake build-essential git zlib1g-dev' \
     && apt-get install -y $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && git clone https://github.com/stnava/ANTs.git /opt/ANTs-src \
-    && cd /opt/ANTs-src && git checkout 3e034a3a10de69e5bfb2046609931c654c2e4ad4 \
+    && cd /opt/ANTs-src && git checkout 1c5634faf5ba8afa0a12c71f8b0d8de774fb6e75 \
     && mkdir /opt/ANTs-src/build && cd /opt/ANTs-src/build \
-    && cmake -DITK_BUILD_MINC_SUPPORT:BOOL=ON \
+    && cmake -DCMAKE_LINKER=/usr/bin/gold -DITK_BUILD_MINC_SUPPORT:BOOL=ON \
     -DBUILD_TESTING:BOOL=OFF -DRUN_LONG_TESTS:BOOL=OFF -DRUN_SHORT_TESTS:BOOL=OFF \
     -DCMAKE_BUILD_TYPE:STRING=Release /opt/ANTs-src && make -j$(nproc) \
-    && mkdir /opt/ANTs && mv /opt/ANTs-src/build/bin /opt/ANTs \
+    && ln -sf /usr/bin/gold /usr/bin/ld \
+    && mkdir -p /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/antsRegistration /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/antsApplyTransforms /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/ImageMath /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/PrintHeader /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/ConvertImage /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/ConvertScalarImageToRGB /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/CreateTiledMosaic /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/AverageImages /opt/ANTs/bin \
+    && cp /opt/ANTs-src/build/bin/antsApplyTransformsToPoints /opt/ANTs/bin \
     && rm -rf /opt/ANTs-src \
     && apt-get purge -y --auto-remove $buildDeps \
     && apt-get clean \
