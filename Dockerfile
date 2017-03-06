@@ -1,5 +1,5 @@
 # Use an image with pre-built ANTs included
-FROM gdevenyi/magetbrain-bids-ants:3e034a3a10de69e5bfb2046609931c654c2e4ad4
+FROM gdevenyi/magetbrain-bids-ants:1c5634faf5ba8afa0a12c71f8b0d8de774fb6e75
 
 RUN apt-get update \
     && apt-get install --auto-remove --no-install-recommends -y parallel \
@@ -10,7 +10,7 @@ RUN apt-get update \
     && curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
-    && (cd /opt/antsRegistration-MAGeT && git checkout bed6e1c45fc10e4de5be75a24119997a59803ee8) \
+    && (cd /opt/antsRegistration-MAGeT && git checkout 17f9f01ab171db85d50be41c228e686ecb10facb) \
     && curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.zip \
     && mkdir /opt/atlases-nifti \
     && unzip /opt/atlases-nifti.zip -d /opt \
