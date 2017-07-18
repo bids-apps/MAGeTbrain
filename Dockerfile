@@ -1,5 +1,5 @@
 # Use an image with pre-built ANTs included
-FROM gdevenyi/magetbrain-bids-ants:1c5634faf5ba8afa0a12c71f8b0d8de774fb6e75
+FROM gdevenyi/magetbrain-bids-ants:8084ef5487ce98a643e4c97360272326289d4de3
 
 RUN apt-get update \
     && apt-get install --auto-remove --no-install-recommends -y parallel \
@@ -10,7 +10,7 @@ RUN apt-get update \
     && curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
-    && (cd /opt/antsRegistration-MAGeT && git checkout 17f9f01ab171db85d50be41c228e686ecb10facb) \
+    && (cd /opt/antsRegistration-MAGeT && git checkout 3e231cda126e9742f9d6b0f489160139721b007f) \
     && curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.zip \
     && mkdir /opt/atlases-nifti \
     && unzip /opt/atlases-nifti.zip -d /opt \
@@ -28,7 +28,7 @@ ENV CONDA_PATH "/opt/anaconda"
 RUN /opt/anaconda/bin/pip install https://github.com/pipitone/qbatch/archive/master.zip
 
 
-RUN npm install -g bids-validator@0.20.0
+RUN npm install -g bids-validator@0.21.3
 
 ENV PATH /opt/ANTs/bin:/opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV QBATCH_SYSTEM local
