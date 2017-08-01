@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import argparse
+zimport argparse
 import os
+import shutil
 import subprocess
 from glob import glob
 import errno
@@ -78,45 +79,45 @@ run('mb.sh -- init')
 if args.segmentation_type != 'colin27-subcortical':
     atlases = glob("/opt/atlases-nifti/brains_t1_nifti/*nii.gz")
     for atlas in atlases:
-        symlink_force(
+        shutil.copy(
             atlas, '{0}/input/atlas/{1}'.format(args.output_dir, os.path.basename(atlas)))
 else:
-    symlink_force('/opt/atlases-nifti/colin/colin27_t1_tal_lin.nii',
+    shutil.copy('/opt/atlases-nifti/colin/colin27_t1_tal_lin.nii',
                   '{0}/input/atlas/colin27_t1.nii'.format(args.output_dir))
 
 #Link in the labels selected
 if args.segmentation_type == 'amygdala':
     labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'cerebellum':
     labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'hippocampus-whitematter':
     labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'all':
     labels = glob('/opt/atlases-nifti/amygdala/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_amygdala.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 
     labels = glob('/opt/atlases-nifti/cerebellum/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_cerebellum.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 
     labels = glob('/opt/atlases-nifti/hippocampus-whitematter/labels/*.nii.gz')
     for label in labels:
-        symlink_force(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
+        shutil.copy(label, '{0}/input/atlas/{1}_hcwm.nii.gz'.format(
             args.output_dir, os.path.splitext(os.path.splitext(os.path.basename(label))[0])[0][0:-1]))
 elif args.segmentation_type == 'colin27-subcortical':
-    symlink_force('/opt/atlases-nifti/colin27-subcortical/labels/thalamus-globus_pallidus-striatum.nii.gz',
+    shutil.copy('/opt/atlases-nifti/colin27-subcortical/labels/thalamus-globus_pallidus-striatum.nii.gz',
                   '{0}/input/atlas/colin27_label_subcortical.nii.gz'.format(args.output_dir))
 
 #Select subjects
@@ -140,7 +141,7 @@ if args.analysis_level == "participant":
     for subject_T1s in T1_files:
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-             symlink_force(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
+             shutil.copy(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
     cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or "") + " ".join(subject_T1_list) + " -- subject resample vote"
     run(cmd)
 
@@ -155,11 +156,11 @@ elif args.analysis_level == "group":
     template_T1_list = []
     if args.participant_label:
         for subject_file in template_T1_files:
-            symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+            shutil.copy(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
     else:
         for subject_file in template_T1_files[0:20]:
-            symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+            shutil.copy(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
     cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
     run(cmd)
