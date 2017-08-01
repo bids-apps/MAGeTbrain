@@ -152,13 +152,14 @@ elif args.analysis_level == "group":
                                          "anat", "*_T1w.nii*")) + glob(os.path.join(args.bids_dir,"sub-{0}".format(subject),"ses-*","anat", "*_T1w.nii*")))
     # Only choose first item for each list, in case of longitudinal data
     # limit list to 21 subjects which is the standard max for MAGeTbrain templates
+    template_T1_list = []
     if args.participant_label:
         for subject_file in template_T1_files:
             symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-            subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+            template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
     else:
         for subject_file in template_T1_files[0:20]:
             symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-            subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(subject_T1_list) + " -- template"
+            template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
     run(cmd)
