@@ -26,8 +26,10 @@ test:
     # print version
     - docker run -ti --rm --read-only -v /tmp:/tmp -v /var/tmp:/var/tmp -v ${HOME}/data/ds003_downsampled:/bids_dataset bids/${CIRCLE_PROJECT_REPONAME,,} --version
     # template level run for downsampled dataset
-    - docker run -ti --rm --read-only -v /tmp:/tmp -v /var/tmp:/var/tmp -v ${HOME}/data/ds003_downsampled:/bids_dataset -v ${HOME}/outputs:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --fast --n_cpus 2 --segmentation_type colin27-subcortical /bids_dataset /outputs group :
+    - docker run -ti --rm --read-only -v /tmp:/tmp -v /var/tmp:/var/tmp -v ${HOME}/data/ds003_downsampled:/bids_dataset -v ${HOME}/outputs:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --fast --n_cpus 2 --segmentation_type colin27-subcortical /bids_dataset /outputs group --participant_label 01 :
         timeout: 21600
+    - docker run -ti --rm --read-only -v /tmp:/tmp -v /var/tmp:/var/tmp -v ${HOME}/data/ds003_downsampled:/bids_dataset -v ${HOME}/outputs:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --fast --n_cpus 2 --segmentation_type colin27-subcortical /bids_dataset /outputs group --participant_label 02 :
+        timeout: 2160
     # participant level tests for a longitudinal dataset
     - docker run -ti --rm --read-only -v /tmp:/tmp -v /var/tmp:/var/tmp -v ${HOME}/data/ds003_downsampled:/bids_dataset -v ${HOME}/outputs:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --fast --n_cpus 2 --segmentation_type colin27-subcortical /bids_dataset /outputs participant --participant_label 01 :
         timeout: 21600

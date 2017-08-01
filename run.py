@@ -46,6 +46,7 @@ parser.add_argument('output_dir', help='The directory where the output files '
 parser.add_argument('analysis_level', help='Level of the analysis that will be performed. '
                     'Multiple participant level analyses can be run independently '
                     '(in parallel) using the same output_dir after a group level preprocessing has been done',
+                    'In MAGeTbrain parlance, group = template stage, partipant = subject stage',
                     choices=['group', 'participant'])
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
                    'corresponds to sub-<participant_label> from the BIDS spec '
@@ -151,7 +152,13 @@ elif args.analysis_level == "group":
                                          "anat", "*_T1w.nii*")) + glob(os.path.join(args.bids_dir,"sub-{0}".format(subject),"ses-*","anat", "*_T1w.nii*")))
     # Only choose first item for each list, in case of longitudinal data
     # limit list to 21 subjects which is the standard max for MAGeTbrain templates
-    for subject_file in template_T1_files[0:20]:
-        symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -- template".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '')
+    if args.participant_label:
+        for subject_file in template_T1_files:
+            symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+            subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+    else
+        for subject_file in template_T1_files[0:20]:
+            symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+            subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(subject_T1_list) + " -- template"
     run(cmd)
