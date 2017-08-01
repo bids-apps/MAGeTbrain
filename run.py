@@ -29,7 +29,7 @@ def run(command, env={}):
         line = process.stdout.readline()
         line = str(line, 'utf-8')[:-1]
         print(line)
-        if line == '' and process.poll() != None:
+        if line == '' and process.poll() is not None:
             break
     if process.returncode != 0:
         raise Exception("Non zero return code: {0}".format(process.returncode))
@@ -156,7 +156,7 @@ elif args.analysis_level == "group":
         for subject_file in template_T1_files:
             symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    else
+    else:
         for subject_file in template_T1_files[0:20]:
             symlink_force(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             subject_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
