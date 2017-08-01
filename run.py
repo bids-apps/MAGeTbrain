@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-zimport argparse
+import argparse
 import os
 import shutil
 import subprocess
@@ -162,5 +162,5 @@ elif args.analysis_level == "group":
         for subject_file in template_T1_files[0:20]:
             shutil.copy(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -t ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
     run(cmd)
