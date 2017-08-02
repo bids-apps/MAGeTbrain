@@ -48,7 +48,7 @@ parser.add_argument('analysis_level', help='Level of the analysis that will be p
                     'Multiple participant level analyses can be run independently '
                     '(in parallel) using the same output_dir after a group level preprocessing has been done. '
                     'In MAGeTbrain parlance, group = template stage, partipant = subject stage',
-                    choices=['group', 'participant'])
+                    choices=['participant1', 'participant2'])
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
                    'corresponds to sub-<participant_label> from the BIDS spec '
                    '(so it does not include "sub-"). If this parameter is not '
@@ -132,7 +132,7 @@ else:
         "-")[-1] for subject_dir in subject_dirs]
 
 # running participant level (must be done after template)
-if args.analysis_level == "participant":
+if args.analysis_level == "participant2":
     T1_files = []
     for subject in subjects_to_analyze:
         T1_files.append(glob(os.path.join(args.bids_dir, "sub-{0}".format(subject),
@@ -146,7 +146,7 @@ if args.analysis_level == "participant":
     run(cmd)
 
 # running template level preprocessing
-elif args.analysis_level == "group":
+elif args.analysis_level == "participant1":
     template_T1_files = []
     for subject in subjects_to_analyze:
         template_T1_files.append(glob(os.path.join(args.bids_dir, "sub-{0}".format(subject),
