@@ -46,9 +46,10 @@ parser.add_argument('output_dir', help='The directory where the output files '
                     'group level analysis.')
 parser.add_argument('analysis_level', help='Level of the analysis that will be performed. '
                     'Multiple participant level analyses can be run independently '
-                    '(in parallel) using the same output_dir after a group level preprocessing has been done. '
-                    'In MAGeTbrain parlance, group = template stage, partipant = subject stage',
-                    choices=['participant1', 'participant2'])
+                    '(in parallel) using the same output_dir. '
+                    'In MAGeTbrain parlance, participant1 = template stage, partipant2 = subject stage '
+                    'group = resample + vote + qc stage',
+                    choices=['participant1', 'participant2', 'group'])
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
                    'corresponds to sub-<participant_label> from the BIDS spec '
                    '(so it does not include "sub-"). If this parameter is not '
@@ -142,7 +143,7 @@ if args.analysis_level == "participant2":
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
              shutil.copy(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or "") + " ".join(subject_T1_list) + " -- subject resample vote"
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or "") + " ".join(subject_T1_list) + " -- subject"
     run(cmd)
 
 # running template level preprocessing
@@ -163,4 +164,8 @@ elif args.analysis_level == "participant1":
             shutil.copy(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
     cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -t ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
+    run(cmd)
+
+elif args.analysis_level == "group":
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh".format(args.n_cpus) + " -- resample vote qc"
     run(cmd)
