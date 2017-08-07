@@ -41,14 +41,15 @@ parser = argparse.ArgumentParser(
 parser.add_argument('bids_dir', help='The directory with the input dataset '
                     'formatted according to the BIDS standard.')
 parser.add_argument('output_dir', help='The directory where the output files '
-                    'should be stored. If you are running participant level analysis '
+                    'should be stored. When you are running group level analysis '
                     'this folder must be prepopulated with the results of the'
-                    'group level analysis.')
+                    'participant level analysis.')
 parser.add_argument('analysis_level', help='Level of the analysis that will be performed. '
                     'Multiple participant level analyses can be run independently '
                     '(in parallel) using the same output_dir. '
                     'In MAGeTbrain parlance, participant1 = template stage, partipant2 = subject stage '
-                    'group = resample + vote + qc stage',
+                    'group = resample + vote + qc stage'
+                    'The proper order is participant1, participant2, group',
                     choices=['participant1', 'participant2', 'group'])
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
                    'corresponds to sub-<participant_label> from the BIDS spec '
@@ -56,7 +57,9 @@ parser.add_argument('--participant_label', help='The label(s) of the participant
                    'provided all subjects should be analyzed. Multiple '
                    'participants can be specified with a space separated list.',
                    nargs="+")
-parser.add_argument('--segmentation_type', help='The segmentation label type to be used',
+parser.add_argument('--segmentation_type', help='The segmentation label type to be used.'
+                    'colin27-subcortical, since it is on a different atlas, is not included'
+                    'in the all setting and must be run seperately',
                     choices=['amygdala', 'cerebellum',
                         'hippocampus-whitematter', 'colin27-subcortical', 'all'],
                     default='all')
@@ -65,6 +68,9 @@ parser.add_argument('-v', '--version', action='version',
 parser.add_argument('--n_cpus', help='Number of CPUs/cores available to use.',
                    default=1, type=int)
 parser.add_argument('--fast', help='Use faster (less accurate) registration calls',
+                   action='store_true')
+parser.add_argument('--label-masking', help='Use the input labels as registration masks to reduce computation'
+                    'and (possibily) improve registration',
                    action='store_true')
 
 args = parser.parse_args()
@@ -143,7 +149,7 @@ if args.analysis_level == "participant2":
          for session in subject_T1s:
              subject_T1_list.append('/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
              shutil.copy(session, '/{0}/input/subject/{1}'.format(args.output_dir, os.path.basename(session)))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or "") + " ".join(subject_T1_list) + " -- subject"
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} {2} -s ".format(args.n_cpus, args.fast and "--reg-command mb_register_fast.sh" or '',args.label_masking and '--label-masking' or '') + " ".join(subject_T1_list) + " -- subject"
     run(cmd)
 
 # running template level preprocessing
@@ -163,7 +169,7 @@ elif args.analysis_level == "participant1":
         for subject_file in template_T1_files[0:20]:
             shutil.copy(subject_file[0], '/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
             template_T1_list.append('/{0}/input/template/{1}'.format(args.output_dir, os.path.basename(subject_file[0])))
-    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} -t ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '') + " ".join(template_T1_list) + " -- template"
+    cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh {1} {2} -t ".format(args.n_cpus, args.fast and '--reg-command mb_register_fast.sh' or '',args.label_masking and '--label-masking' or '') + " ".join(template_T1_list) + " -- template"
     run(cmd)
 
 elif args.analysis_level == "group":
