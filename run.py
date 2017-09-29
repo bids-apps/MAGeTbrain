@@ -48,7 +48,7 @@ parser.add_argument('analysis_level', help='Level of the analysis that will be p
                     'Multiple participant level analyses can be run independently '
                     '(in parallel) using the same output_dir. '
                     'In MAGeTbrain parlance, participant1 = template stage, partipant2 = subject stage '
-                    'group = resample + vote + qc stage'
+                    'group = resample + vote + qc stage. '
                     'The proper order is participant1, participant2, group',
                     choices=['participant1', 'participant2', 'group'])
 parser.add_argument('--participant_label', help='The label(s) of the participant(s) that should be analyzed. The label '
@@ -58,7 +58,7 @@ parser.add_argument('--participant_label', help='The label(s) of the participant
                    'participants can be specified with a space separated list.',
                    nargs="+")
 parser.add_argument('--segmentation_type', help='The segmentation label type to be used.'
-                    'colin27-subcortical, since it is on a different atlas, is not included'
+                    ' colin27-subcortical, since it is on a different atlas, is not included '
                     'in the all setting and must be run seperately',
                     choices=['amygdala', 'cerebellum',
                         'hippocampus-whitematter', 'colin27-subcortical', 'all'],
@@ -69,7 +69,7 @@ parser.add_argument('--n_cpus', help='Number of CPUs/cores available to use.',
                    default=1, type=int)
 parser.add_argument('--fast', help='Use faster (less accurate) registration calls',
                    action='store_true')
-parser.add_argument('--label-masking', help='Use the input labels as registration masks to reduce computation'
+parser.add_argument('--label-masking', help='Use the input labels as registration masks to reduce computation '
                     'and (possibily) improve registration',
                    action='store_true')
 parser.add_argument('--no-cleanup', help='Do no cleanup intermediate files after group phase',
