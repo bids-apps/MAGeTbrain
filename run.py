@@ -72,6 +72,8 @@ parser.add_argument('--fast', help='Use faster (less accurate) registration call
 parser.add_argument('--label-masking', help='Use the input labels as registration masks to reduce computation'
                     'and (possibily) improve registration',
                    action='store_true')
+parser.add_argument('--no-cleanup', help='Do no cleanup intermediate files after group phase',
+                   action='store_true')
 
 args = parser.parse_args()
 
@@ -175,3 +177,7 @@ elif args.analysis_level == "participant1":
 elif args.analysis_level == "group":
     cmd = "QBATCH_PPJ={0} QBATCH_CHUNKSIZE=1 QBATCH_CORES=1 mb.sh".format(args.n_cpus) + " -- resample vote qc"
     run(cmd)
+    if (not args.no_cleanup):
+        run("rm -rf input")
+        run("rm -rf output/transforms")
+        run("rm -rf output/labels/candidates")
