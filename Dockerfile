@@ -6,7 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends --auto-remove git curl unzip \
+    && apt-get install -y --no-install-recommends --auto-remove git curl unzip bzip2 \
     && curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
@@ -19,7 +19,7 @@ RUN apt-get update \
     && mkdir /opt/atlases-nifti/colin && unzip /opt/atlases-nifti/colin.zip -d /opt/atlases-nifti/colin && rm -f /opt/atlases-nifti/colin.zip \
     && curl -sL https://deb.nodesource.com/setup_4.x | bash - \
     && apt-get install -y nodejs \
-    && apt-get purge --auto-remove -y git curl unzip \
+    && apt-get purge --auto-remove -y git curl unzip bzip2 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PATH "/opt/anaconda"
