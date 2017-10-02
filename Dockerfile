@@ -1,5 +1,5 @@
 # Use an image with pre-built ANTs included
-FROM gdevenyi/magetbrain-bids-ants:8084ef5487ce98a643e4c97360272326289d4de3
+FROM gdevenyi/magetbrain-bids-ants:8f97965272f967b128237d3f529bbb9350fdcf8a
 
 RUN apt-get update \
     && apt-get install --auto-remove --no-install-recommends -y parallel \
