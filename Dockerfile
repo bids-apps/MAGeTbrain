@@ -10,7 +10,7 @@ RUN apt-get update \
     && curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh \
     && git clone  https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT \
-    && (cd /opt/antsRegistration-MAGeT && git checkout tags/v0.2.2) \
+    && (cd /opt/antsRegistration-MAGeT && git checkout tags/v0.2.2.1) \
     && curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.zip \
     && mkdir /opt/atlases-nifti \
     && unzip /opt/atlases-nifti.zip -d /opt \
