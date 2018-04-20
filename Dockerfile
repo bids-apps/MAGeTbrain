@@ -1,5 +1,5 @@
 # Use an image with pre-built ANTs included
-FROM gdevenyi/magetbrain-bids-ants:8f97965272f967b128237d3f529bbb9350fdcf8a
+FROM gdevenyi/magetbrain-bids-ants:21d7c12ee1e332827b04848eb5f70f55d14cac23
 
 RUN apt-get update \
     && apt-get install --auto-remove --no-install-recommends -y parallel \
@@ -24,11 +24,9 @@ RUN apt-get update \
 
 ENV CONDA_PATH "/opt/anaconda"
 
-#RUN /opt/anaconda/bin/pip install qbatch
-RUN /opt/anaconda/bin/pip install https://github.com/pipitone/qbatch/archive/master.zip
+RUN /opt/anaconda/bin/pip install git+https://github.com/pipitone/qbatch.git@aade5b9a17c5a5a2fe6b28267b3bca10b05a5936
 
-
-RUN npm install -g bids-validator@0.21.3
+RUN npm install -g bids-validator@0.26.4
 
 ENV PATH /opt/ANTs/bin:/opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV QBATCH_SYSTEM local

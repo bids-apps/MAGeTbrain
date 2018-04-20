@@ -1,5 +1,5 @@
 # Use phusion/baseimage as base image
-FROM phusion/baseimage:0.9.22
+FROM phusion/baseimage:0.10.1
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -11,7 +11,7 @@ RUN buildDeps='cmake build-essential git zlib1g-dev' \
     && apt-get install -y $buildDeps --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && git clone https://github.com/stnava/ANTs.git /opt/ANTs-src \
-    && cd /opt/ANTs-src && git checkout 8f97965272f967b128237d3f529bbb9350fdcf8a \
+    && cd /opt/ANTs-src && git checkout 21d7c12ee1e332827b04848eb5f70f55d14cac23 \
     && mkdir /opt/ANTs-src/build && cd /opt/ANTs-src/build \
     && cmake -DCMAKE_LINKER=/usr/bin/gold -DITK_BUILD_MINC_SUPPORT:BOOL=ON \
     -DBUILD_TESTING:BOOL=OFF -DRUN_LONG_TESTS:BOOL=OFF -DRUN_SHORT_TESTS:BOOL=OFF \
