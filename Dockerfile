@@ -19,7 +19,7 @@ RUN apt-get update \
     && mkdir /opt/atlases-nifti/colin && unzip /opt/atlases-nifti/colin.zip -d /opt/atlases-nifti/colin && rm -f /opt/atlases-nifti/colin.zip \
     && curl -sL https://deb.nodesource.com/setup_4.x | bash - \
     && apt-get install -y nodejs \
-    && apt-get purge --auto-remove -y git curl unzip bzip2 \
+    && apt-get purge --auto-remove -y curl unzip bzip2 \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_PATH "/opt/anaconda"
