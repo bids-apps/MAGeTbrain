@@ -1,14 +1,14 @@
 ## MAGeTbrain segmentation pipeline
 
 ### Description
-This pipeline takes in native-space T1 or T2 (or multiple co-registered modalities) brain images and volumetrically segments
-them using the MAGeTbrain algorithm.
+This pipeline takes in native-space T1 brain images and volumetrically segments
+them using the MAGeTbrain algorithm using a variety of input atlases.
 
 ### Documentation
-Provide a link to the documention of your pipeline.
+https://github.com/cobralab/antsRegistration-MAGet.
 
 ### How to report errors
-Provide instructions for users on how to get help and report errors.
+Please open an issue at https://github.com/BIDS-Apps/MAGeTbrain/issues
 
 ### Acknowledgements
 Describe how would you would like users to acknowledge use of your App in their papers (citation, a paragraph that can be copy pasted, etc.)
@@ -21,7 +21,7 @@ usage: run.py [-h]
               [--participant_label PARTICIPANT_LABEL [PARTICIPANT_LABEL ...]]
               [--segmentation_type {amygdala,cerebellum,hippocampus-whitematter,colin27-subcortical,all}]
               [-v] [--n_cpus N_CPUS] [--fast] [--label-masking] [--no-cleanup]
-              bids_dir output_dir {participant1,participant2,group}
+              bids_dir output_dir {participant1,participant2}
 
 MAGeTbrain BIDS App entrypoint script.
 
@@ -29,16 +29,16 @@ positional arguments:
   bids_dir              The directory with the input dataset formatted
                         according to the BIDS standard.
   output_dir            The directory where the output files should be stored.
-                        When you are running group level analysis this folder
+                        When you are running partipant2 level analysis this folder
                         must be prepopulated with the results of
-                        theparticipant level analysis.
-  {participant1,participant2,group}
+                        the participant1 level analysis.
+  {participant1,participant2}
                         Level of the analysis that will be performed. Multiple
-                        participant level analyses can be run independently
-                        (in parallel) using the same output_dir. In MAGeTbrain
-                        parlance, participant1 = template stage, partipant2 =
-                        subject stage group = resample + vote + qc stage. The
-                        proper order is participant1, participant2, group
+                        participant{1,2} level analyses can be run
+                        independently (in parallel) using the same output_dir.
+                        In MAGeTbrain parlance, participant1 = template stage,
+                        partipant2 = subject + resample + vote + qc stage. The
+                        proper order is participant1, participant2
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -53,35 +53,39 @@ optional arguments:
                         The segmentation label type to be used.
                         colin27-subcortical, since it is on a different atlas,
                         is not included in the all setting and must be run
-                        seperately
+                        separately
   -v, --version         show program's version number and exit
   --n_cpus N_CPUS       Number of CPUs/cores available to use.
   --fast                Use faster (less accurate) registration calls
   --label-masking       Use the input labels as registration masks to reduce
-                        computation and (possibily) improve registration
+                        computation and (possibly) improve registration
   --no-cleanup          Do no cleanup intermediate files after group phase
 ```
 
-To run it in participant level mode (for one participant):
+To run construct the template library, run the participant1 stage:
 ```sh
     docker run -i --rm \
 		-v /Users/filo/data/ds005:/bids_dataset:ro \
 		-v /Users/filo/outputs:/outputs \
 		bids/example \
-		/bids_dataset /outputs participant --participant_label 01
+		/bids_dataset /outputs participant1 --participant_label 01
 ```
-After doing this for all subjects (potentially in parallel), the group level analysis
+
+After doing this for approximately 21 representative subjects (potentially in parallel),
+the subject level labeling can be done:
 can be run:
 ```sh
     docker run -i --rm \
 		-v /Users/filo/data/ds005:/bids_dataset:ro \
 		-v /Users/filo/outputs:/outputs \
-		bids/example \
-		/bids_dataset /outputs group
+		bids/example /outputs participants2 --participant_label 01
 ```
-### Special considerations
-Describe whether your app has any special requirements. For example:
+This can also happen in parallel on a per-subject basis
 
-- Multiple map reduce steps (participant, group, participant2, group2 etc.)
-- Unusual memory requirements
-- etc.
+### Special considerations
+- segmentation_types output directories must be kept separate for each type
+- participant1 stages can be run in parallel per subject, approximately 21
+subjects should be selected which are a representative subset of the population
+under study
+- participant2 stages can also be run in parallel, but must be started after
+participant1 stages are complete
