@@ -2,10 +2,10 @@
 FROM gdevenyi/magetbrain-bids-ants:82dcdd647211004f3220e4073ea4daf06fdf89f9
 
 RUN apt-get update \
-    && apt-get install --auto-remove --no-install-recommends -y parallel git curl gzip bzip2 gnupg2 unzip coreutils \
+    && apt-get install --auto-remove --no-install-recommends -y parallel git curl gzip bzip2 gnupg2 unzip coreutils ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+RUN curl --insecure -o anaconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash anaconda.sh -b -p /opt/anaconda && rm -f anaconda.sh
 
 RUN curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.zip \
@@ -16,7 +16,7 @@ RUN curl -o /opt/atlases-nifti.zip -sL http://cobralab.net/files/atlases-nifti.z
     && mkdir /opt/atlases-nifti/colin && unzip /opt/atlases-nifti/colin.zip -d /opt/atlases-nifti/colin && rm -f /opt/atlases-nifti/colin.zip \
     && gzip /opt/atlases-nifti/colin/colin27_t1_tal_lin.nii
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl --insecure -sL https://deb.nodesource.com/setup_10.x | bash - \
     && apt-get install -y --no-install-recommends --auto-remove nodejs \
     && rm -rf /var/lib/apt/lists/*
 
