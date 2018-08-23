@@ -30,7 +30,7 @@ RUN /opt/anaconda/bin/pip install pybids
 RUN npm install -g bids-validator@0.26.18 --unsafe-perm
 
 RUN git clone https://github.com/CobraLab/antsRegistration-MAGeT.git /opt/antsRegistration-MAGeT && \
-    (cd /opt/antsRegistration-MAGeT && git checkout tags/v0.3.1)
+    (cd /opt/antsRegistration-MAGeT && git checkout tags/v0.3.1.1)
 RUN /opt/anaconda/bin/pip install git+https://github.com/pipitone/qbatch.git@951dd1bdfdcbb5fd3f27ee6a3e261eaecac1ef70
 
 ENV PATH /opt/ANTs/bin:/opt/anaconda/bin:/opt/antsRegistration-MAGeT/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
