@@ -67,7 +67,7 @@ To run construct the template library, run the participant1 stage:
     docker run -i --rm \
 		-v /Users/filo/data/ds005:/bids_dataset:ro \
 		-v /Users/filo/outputs:/outputs \
-		bids/example \
+		bids/magetbrain \
 		/bids_dataset /outputs participant1 --participant_label 01
 ```
 
@@ -78,7 +78,7 @@ can be run:
     docker run -i --rm \
 		-v /Users/filo/data/ds005:/bids_dataset:ro \
 		-v /Users/filo/outputs:/outputs \
-		bids/example /outputs participants2 --participant_label 01
+		bids/magetbrain /outputs participants2 --participant_label 01
 ```
 This can also happen in parallel on a per-subject basis
 
