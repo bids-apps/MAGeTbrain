@@ -46,8 +46,8 @@ jobs:
         - docker/image.tar
 
   test:
-    docker:
-    - image: ubuntu-2204:2022.10.2
+    machine:
+      image: ubuntu-2204:2022.10.2
 
     parameters:
       participant:
@@ -76,7 +76,7 @@ jobs:
             -v ${HOME}/outputs-colin:/outputs \
             bids/${CIRCLE_PROJECT_REPONAME,,} \
             --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label << parameters.dataset >>
+            /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
         no_output_timeout: 6h
 
     - run:
@@ -87,7 +87,7 @@ jobs:
             -v ${HOME}/outputs-colin:/outputs \
             bids/${CIRCLE_PROJECT_REPONAME,,} \
             --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label << parameters.dataset >>
+            /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
         no_output_timeout: 6h
 
     - run:
@@ -98,7 +98,7 @@ jobs:
             -v ${HOME}/outputs-colin-labelmask:/outputs \
             bids/${CIRCLE_PROJECT_REPONAME,,} \
             --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label << parameters.dataset >>
+            /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
         no_output_timeout: 6h
 
     - run:
@@ -109,7 +109,7 @@ jobs:
             -v ${HOME}/outputs-colin-labelmask:/outputs \
             bids/${CIRCLE_PROJECT_REPONAME,,} \
             --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label << parameters.dataset >>
+            /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
         no_output_timeout: 6h
 
   deploy:
@@ -143,12 +143,12 @@ workflows:
     - test:
         requires:
         - build
-    - deploy:
-        requires:
-        - test
         matrix:
           parameters:
             participant: ['01', '02']
+    - deploy:
+        requires:
+        - test
         filters:
           tags:
             only: /.*/
