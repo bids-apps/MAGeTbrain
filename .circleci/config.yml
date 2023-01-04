@@ -23,19 +23,15 @@ jobs:
           fi
 
     - run:
+        name: Build Docker image
         command: |
-          if [[ -e ~/docker/image.tar ]]; \
-            then docker load -i ~/docker/image.tar;
+          if [[ -e ${HOME}/docker/image.tar ]]; \
+            then docker load -i ${HOME}/docker/image.tar;
           fi
-    - run: git describe --tags --always > version
-    - run:
-        name: Build image
-        command: docker build -t bids/${CIRCLE_PROJECT_REPONAME,,} .
-        no_output_timeout: 6h
-    - run:
-        name: Save image
-        command: |
-          mkdir -p ~/docker; docker save "bids/${CIRCLE_PROJECT_REPONAME,,}" > ~/docker/image.tar
+          git describe --tags --always > version
+          docker build -t bids/${CIRCLE_PROJECT_REPONAME,,} .
+          mkdir -p ${HOME}/docker
+          docker save "bids/${CIRCLE_PROJECT_REPONAME,,}" > ${HOME}/docker/image.tar
 
     - save_cache:
         key: my_cache
@@ -44,20 +40,23 @@ jobs:
         - ~/data
 
     - persist_to_workspace:
-        root: ~/docker
+        root: /home/circleci
         paths:
-        - image.tar
+        - data/ds003_downsampled_v2
+        - docker/image.tar
 
   test:
     docker:
     - image: ubuntu-2204:2022.10.2
 
+    parameters:
+      participant:
+        type: string
+
     steps:
     - attach_workspace:
         at: /tmp/workspace
     - run: docker load -i /tmp/workspace/image.tar
-
-    - setup_remote_docker
 
     - run: mkdir -p ${HOME}/outputs-colin
     - run: mkdir -p ${HOME}/outputs-colin-labelmask
@@ -66,122 +65,91 @@ jobs:
         name: print version
         command: |
           docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
-            -v ${HOME}/data/ds003_downsampled:/bids_dataset bids/${CIRCLE_PROJECT_REPONAME,,} --version
+            -v ${HOME}/data/ds003_downsampled:/bids_dataset \
+              bids/${CIRCLE_PROJECT_REPONAME,,} --version
 
     - run:
         name: template level run for downsampled dataset no masking
         command: |
           docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
             -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-            -v ${HOME}/outputs-colin:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label 01 && \
-          docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
-            -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-            -v ${HOME}/outputs-colin:/outputs bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label 02
+            -v ${HOME}/outputs-colin:/outputs \
+            bids/${CIRCLE_PROJECT_REPONAME,,} \
+            --n_cpus 2 --segmentation_type colin27-subcortical \
+            /bids_dataset /outputs participant1 --participant_label << parameters.dataset >>
         no_output_timeout: 6h
 
     - run:
         name: participant level tests for a longitudinal dataset no masking
         command: |
           docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
             -v ${HOME}/data/ds003_downsampled:/bids_dataset \
             -v ${HOME}/outputs-colin:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label 01 && \
-          docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
-            -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-            -v ${HOME}/outputs-colin:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label 02
+            bids/${CIRCLE_PROJECT_REPONAME,,} \
+            --n_cpus 2 --segmentation_type colin27-subcortical \
+            /bids_dataset /outputs participant2 --participant_label << parameters.dataset >>
         no_output_timeout: 6h
 
     - run:
         name: template level run for downsampled dataset with masking
         command: |
           docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
             -v ${HOME}/data/ds003_downsampled:/bids_dataset \
             -v ${HOME}/outputs-colin-labelmask:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label 01 && \
-          docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
-            -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-            -v ${HOME}/outputs-colin-labelmask:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant1 --participant_label 02
+            bids/${CIRCLE_PROJECT_REPONAME,,} \
+            --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
+            /bids_dataset /outputs participant1 --participant_label << parameters.dataset >>
         no_output_timeout: 6h
 
     - run:
         name: participant level tests for a longitudinal dataset with masking
         command: |
           docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
             -v ${HOME}/data/ds003_downsampled:/bids_dataset \
             -v ${HOME}/outputs-colin-labelmask:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label 01 && \
-          docker run -ti --rm --read-only \
-            -v /tmp:/tmp \
-            -v /var/tmp:/var/tmp \
-            -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-            -v ${HOME}/outputs-colin-labelmask:/outputs \
-            bids/${CIRCLE_PROJECT_REPONAME,,} --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-            /bids_dataset /outputs participant2 --participant_label 02
+            bids/${CIRCLE_PROJECT_REPONAME,,} \
+            --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
+            /bids_dataset /outputs participant2 --participant_label << parameters.dataset >>
         no_output_timeout: 6h
 
-  deployment:
-    docker:
-    - image: circleci/buildpack-deps:stretch
+  deploy:
+
+    machine:
+      image: ubuntu-2204:2022.10.2
 
     steps:
     - attach_workspace:
         at: /tmp/workspace
-    - setup_remote_docker
-    - run: docker load -i /tmp/workspace/image.tar
+
+    - run: docker load -i /tmp/workspace/docker/image.tar
     - run:
-        command: if [[ -n "$DOCKER_PASS" ]]; then docker login -u $DOCKER_USER -p $DOCKER_PASS && \ docker push bids/${CIRCLE_PROJECT_REPONAME,,}:latest;
-          \ fi
-        no_output_timeout: 6h
-    - run:
-        command: if [[ -n "$DOCKER_PASS" ]]; then docker login -u $DOCKER_USER -p $DOCKER_PASS && \ docker tag bids/${CIRCLE_PROJECT_REPONAME,,} bids/${CIRCLE_PROJECT_REPONAME,,}:$CIRCLE_TAG
-          && \ docker push bids/${CIRCLE_PROJECT_REPONAME,,}:$CIRCLE_TAG; fi
-        no_output_timeout: 6h
+        name: push to dockerhub
+        command: |
+          if [[ -n "$DOCKER_PASS" ]]; then
+            echo "${DOCKER_PASS}" | docker login -u ${DOCKER_USER} --password-stdin && \
+            docker push bids/${CIRCLE_PROJECT_REPONAME}:unstable
+            if [[ -n "${CIRCLE_TAG}" ]]; then
+              docker push bids/${CIRCLE_PROJECT_REPONAME}:latest
+              docker tag bids/${CIRCLE_PROJECT_REPONAME} bids/${CIRCLE_PROJECT_REPONAME}:$CIRCLE_TAG
+              docker push bids/${CIRCLE_PROJECT_REPONAME}:$CIRCLE_TAG;
+            fi
+          fi
+
 
 workflows:
-  version: 2
   build-test-deploy:
     jobs:
-    - build:
-        filters:
-          tags:
-            only: /.*/
+    - build
     - test:
         requires:
         - build
-        filters:
-          tags:
-            only: /.*/
-    - deployment:
+    - deploy:
         requires:
-        - build
+        - test
+        matrix:
+          parameters:
+            participant: ['01', '02']
         filters:
-          branches:
-            ignore: /.*/
           tags:
             only: /.*/
 # VS Code Extension Version: 1.5.1
