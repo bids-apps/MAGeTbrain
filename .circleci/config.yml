@@ -65,9 +65,9 @@ jobs:
             docker run -ti --rm --read-only \
               -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin:/outputs \
-              bids/${CIRCLE_PROJECT_REPONAME,,} \
-              --n_cpus 2 --segmentation_type colin27-subcortical \
-              /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
+                bids/${CIRCLE_PROJECT_REPONAME,,} \
+                  --n_cpus 2 --segmentation_type colin27-subcortical \
+                  /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
           no_output_timeout: 6h
 
       - run:
@@ -76,9 +76,9 @@ jobs:
             docker run -ti --rm --read-only \
               -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin:/outputs \
-              bids/${CIRCLE_PROJECT_REPONAME,,} \
-              --n_cpus 2 --segmentation_type colin27-subcortical \
-              /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
+                bids/${CIRCLE_PROJECT_REPONAME,,} \
+                  --n_cpus 2 --segmentation_type colin27-subcortical \
+                  /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
           no_output_timeout: 6h
 
       - run:
@@ -87,9 +87,9 @@ jobs:
             docker run -ti --rm --read-only \
               -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin-labelmask:/outputs \
-              bids/${CIRCLE_PROJECT_REPONAME,,} \
-              --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-              /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
+                bids/${CIRCLE_PROJECT_REPONAME,,} \
+                --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
+                /bids_dataset /outputs participant1 --participant_label << parameters.participant >>
           no_output_timeout: 6h
 
       - run:
@@ -98,9 +98,9 @@ jobs:
             docker run -ti --rm --read-only \
               -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin-labelmask:/outputs \
-              bids/${CIRCLE_PROJECT_REPONAME,,} \
-              --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
-              /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
+                bids/${CIRCLE_PROJECT_REPONAME,,} \
+                  --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
+                  /bids_dataset /outputs participant2 --participant_label << parameters.participant >>
           no_output_timeout: 6h
 
   deploy:
@@ -132,3 +132,5 @@ workflows:
           filters:
             tags:
               only: /.*/
+
+# VS Code Extension Version: 1.5.1
