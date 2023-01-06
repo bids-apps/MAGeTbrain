@@ -56,14 +56,14 @@ jobs:
           name: print version
           command: |
             docker run -ti --rm --read-only \
-              /tmp/workspace/data/ds003_downsampled:/bids_dataset \
+              -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
                 bids/${CIRCLE_PROJECT_REPONAME,,} --version
 
       - run:
           name: template level run for downsampled dataset no masking
           command: |
             docker run -ti --rm --read-only \
-              /tmp/workspace/data/ds003_downsampled:/bids_dataset \
+              -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin:/outputs \
               bids/${CIRCLE_PROJECT_REPONAME,,} \
               --n_cpus 2 --segmentation_type colin27-subcortical \
@@ -74,7 +74,7 @@ jobs:
           name: participant level tests for a longitudinal dataset no masking
           command: |
             docker run -ti --rm --read-only \
-              /tmp/workspace/data/ds003_downsampled:/bids_dataset \
+              -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin:/outputs \
               bids/${CIRCLE_PROJECT_REPONAME,,} \
               --n_cpus 2 --segmentation_type colin27-subcortical \
@@ -85,7 +85,7 @@ jobs:
           name: template level run for downsampled dataset with masking
           command: |
             docker run -ti --rm --read-only \
-              /tmp/workspace/data/ds003_downsampled:/bids_dataset \
+              -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin-labelmask:/outputs \
               bids/${CIRCLE_PROJECT_REPONAME,,} \
               --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
@@ -96,7 +96,7 @@ jobs:
           name: participant level tests for a longitudinal dataset with masking
           command: |
             docker run -ti --rm --read-only \
-              /tmp/workspace/data/ds003_downsampled:/bids_dataset \
+              -v /tmp/workspace/data/ds003_downsampled:/bids_dataset \
               -v ${HOME}/outputs-colin-labelmask:/outputs \
               bids/${CIRCLE_PROJECT_REPONAME,,} \
               --n_cpus 2 --label-masking --segmentation_type colin27-subcortical \
