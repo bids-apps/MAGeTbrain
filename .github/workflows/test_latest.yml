@@ -1,0 +1,69 @@
+---
+name: test latest image
+
+on:
+  pull_request:
+    branches: ['*']
+  schedule:
+  - cron: 0 0 1 * *
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+
+  test_latest_image:
+
+    strategy:
+      matrix:
+        participant: ['01', '°2']
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tree
+
+    - name: Clone repo
+      uses: actions/checkout@v3
+
+    - name: pull docker image
+      run: docker pull bids/magetbrain:latest
+
+    - name: print version
+      run: |
+        docker run -t --rm \
+              bids/magetbrain:latest -v
+        docker run -t --rm \
+              bids/magetbrain:latest -h
+
+    - name: get data
+      run: |
+        wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/utils/get_data_from_osf.sh
+        bash get_data_from_osf.sh ds003_downsampled
+
+    - name: prepare output dir
+      run: |
+        mkdir -p ${HOME}/outputs-colin
+        mkdir -p ${HOME}/outputs-colin-labelmask
+
+    - name: template level run for downsampled dataset no masking
+      run: |
+        docker run -t --rm --read-only \
+        -v ${HOME}/data/ds003_downsampled:/bids_dataset \
+        -v ${HOME}/outputs-colin:/outputs \
+          bids/magetbrain:latest \
+            --n_cpus 2 --segmentation_type colin27-subcortical \
+            /bids_dataset /outputs participant1 --participant_label ${{ matrix.participant }}
+
+    - name: check output
+      run: tree ${HOME}/data/ds114_test1_with_freesurfer/derivatives
