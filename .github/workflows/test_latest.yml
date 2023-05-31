@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        participant: ['01', '°2']
+        participant: ['01', °2]
       fail-fast: false
 
     runs-on: ubuntu-latest
