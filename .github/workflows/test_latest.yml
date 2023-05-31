@@ -68,7 +68,7 @@ jobs:
 
     - name: participant level tests for a longitudinal dataset ${{ matrix.masking }}
       run: |
-        docker run -ti --rm  \
+        docker run -t --rm  \
         -v ${HOME}/data/ds003_downsampled:/bids_dataset \
         -v ${HOME}/outputs-colin:/outputs \
           bids/magetbrain:latest \
