@@ -23,6 +23,7 @@ jobs:
     strategy:
       matrix:
         participant: ['01', '02']
+        masking: ['', --label-masking]
       fail-fast: false
 
     runs-on: ubuntu-latest
@@ -56,14 +57,25 @@ jobs:
         mkdir -p ${HOME}/outputs-colin
         mkdir -p ${HOME}/outputs-colin-labelmask
 
-    - name: template level run for downsampled dataset no masking
+    - name: template level run for downsampled dataset ${{ matrix.masking }}
       run: |
         docker run -t --rm \
         -v ${HOME}/data/ds003_downsampled:/bids_dataset \
         -v ${HOME}/outputs-colin:/outputs \
           bids/magetbrain:latest \
-            --n_cpus 2 --segmentation_type colin27-subcortical \
+            --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
             /bids_dataset /outputs participant1 --participant_label ${{ matrix.participant }}
 
+    - name: participant level tests for a longitudinal dataset ${{ matrix.masking }}
+      run: |
+        docker run -ti --rm  \
+        -v ${HOME}/data/ds003_downsampled:/bids_dataset \
+        -v ${HOME}/outputs-colin:/outputs \
+          bids/magetbrain:latest \
+            --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
+            /bids_dataset /outputs participant2 --participant_label ${{ matrix.participant }}
+
     - name: check output
-      run: tree ${HOME}/data/ds114_test1_with_freesurfer/derivatives
+      run: |
+        tree ${HOME}/outputs-colin
+        tree ${HOME}/outputs-colin-labelmask
