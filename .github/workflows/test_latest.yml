@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        participant: ['01', °2]
+        participant: ['01', '02']
       fail-fast: false
 
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
 
     - name: template level run for downsampled dataset no masking
       run: |
-        docker run -t --rm --read-only \
+        docker run -t --rm \
         -v ${HOME}/data/ds003_downsampled:/bids_dataset \
         -v ${HOME}/outputs-colin:/outputs \
           bids/magetbrain:latest \
