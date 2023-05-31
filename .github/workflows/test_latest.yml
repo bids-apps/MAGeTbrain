@@ -54,14 +54,13 @@ jobs:
 
     - name: prepare output dir
       run: |
-        mkdir -p ${HOME}/outputs-colin
-        mkdir -p ${HOME}/outputs-colin-labelmask
+        mkdir -p ${HOME}/outputs
 
     - name: template level run for downsampled dataset ${{ matrix.masking }}
       run: |
         docker run -t --rm \
         -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-        -v ${HOME}/outputs-colin:/outputs \
+        -v ${HOME}/outputs:/outputs \
           bids/magetbrain:latest \
             --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
             /bids_dataset /outputs participant1 --participant_label ${{ matrix.participant }}
@@ -70,12 +69,12 @@ jobs:
       run: |
         docker run -t --rm  \
         -v ${HOME}/data/ds003_downsampled:/bids_dataset \
-        -v ${HOME}/outputs-colin:/outputs \
+        -v ${HOME}/outputs:/outputs \
           bids/magetbrain:latest \
             --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
             /bids_dataset /outputs participant2 --participant_label ${{ matrix.participant }}
 
     - name: check output
       run: |
-        tree ${HOME}/outputs-colin
-        tree ${HOME}/outputs-colin-labelmask
+        tree ${HOME}/outputs
+        tree ${HOME}/outputs-labelmask
