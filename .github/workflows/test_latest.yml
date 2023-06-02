@@ -1,0 +1,80 @@
+---
+name: test latest image
+
+on:
+  pull_request:
+    branches: ['*']
+  schedule:
+  - cron: 0 0 1 * *
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+
+  test_latest_image:
+
+    strategy:
+      matrix:
+        participant: ['01', '02']
+        masking: ['', --label-masking]
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tree
+
+    - name: Clone repo
+      uses: actions/checkout@v3
+
+    - name: pull docker image
+      run: docker pull bids/magetbrain:latest
+
+    - name: print version
+      run: |
+        docker run -t --rm \
+              bids/magetbrain:latest -v
+        docker run -t --rm \
+              bids/magetbrain:latest -h
+
+    - name: get data
+      run: |
+        wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/utils/get_data_from_osf.sh
+        bash get_data_from_osf.sh ds003_downsampled
+
+    - name: prepare output dir
+      run: |
+        mkdir -p ${HOME}/outputs
+
+    - name: template level run for downsampled dataset ${{ matrix.masking }}
+      run: |
+        docker run -t --rm \
+        -v ${HOME}/data/ds003_downsampled:/bids_dataset \
+        -v ${HOME}/outputs:/outputs \
+          bids/magetbrain:latest \
+            --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
+            /bids_dataset /outputs participant1 --participant_label ${{ matrix.participant }}
+
+    - name: participant level tests for a longitudinal dataset ${{ matrix.masking }}
+      run: |
+        docker run -t --rm  \
+        -v ${HOME}/data/ds003_downsampled:/bids_dataset \
+        -v ${HOME}/outputs:/outputs \
+          bids/magetbrain:latest \
+            --n_cpus 2 --segmentation_type colin27-subcortical ${{ matrix.masking }} \
+            /bids_dataset /outputs participant2 --participant_label ${{ matrix.participant }}
+
+    - name: check output
+      run: |
+        tree ${HOME}/outputs
+        tree ${HOME}/outputs-labelmask
